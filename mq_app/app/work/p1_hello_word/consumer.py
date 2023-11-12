@@ -4,5 +4,5 @@ def callback(ch, method, properties, body):
 
 class Consumer:
     @staticmethod
-    def run(receiver):
-        receiver.consume_messages("hello", callback)
+    def run(receiver, **kwargs):
+        receiver.consume_messages(queue_name="hello", callback=callback)

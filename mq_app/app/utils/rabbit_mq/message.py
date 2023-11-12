@@ -20,13 +20,9 @@ class Client:
             queue_name = result.method.queue
         return queue_name
 
-
     def exchange_declare(self, exchange, exchange_type):
         self.channel.exchange_declare(exchange=exchange,
                                       exchange_type=exchange_type)
-
-    def queue_bind_exchange(self, exchange, queue_name):
-        self.channel.queue_bind(exchange=exchange, queue=queue_name)
 
 
 class MessageSender(Client):
@@ -56,12 +52,12 @@ class MessageReceiver(Client):
             print('No message returned')
 
     def consume_messages(self, queue_name, callback, auto_ack=False):
-        # def callback(ch, method, properties, body):
-        #     print(" [x] Received %r" % body)
-
         self.channel.basic_qos(prefetch_count=1)  # 一次只接收一個消息
         self.channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=auto_ack)
         # auto ack: 一旦rabbitmq將消息發送給消費者，就從內存中刪除，無論消費者是否處理完畢，所以要關閉，並在程式內確認
 
         print(' [*] Waiting for messages. To exit press CTRL+C')
         self.channel.start_consuming()
+
+    def queue_bind_exchange(self, exchange, queue_name, routing_key=""):
+        self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
