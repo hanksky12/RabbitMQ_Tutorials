@@ -22,24 +22,32 @@ class Producer:
         if len(sys.argv) < 2:
             raise Exception("未選擇生產者")
         producer = None
-        routing_key_default = ''
+        message = None
+        routing_key = None
+
         if sys.argv[1] == "1":
             producer = HelloWordProducer()
+            message = ' '.join(sys.argv[2:]) or 'Hello World!'
         elif sys.argv[1] == "2":
             producer = WorkQueuesProducer()
+            message = ' '.join(sys.argv[2:]) or 'WorkQueues!'
         elif sys.argv[1] == "3":
             producer = PublishSubscribeProducer()
+            message = ' '.join(sys.argv[2:]) or 'PublishSubscribe!'
         elif sys.argv[1] == "4":
             producer = RoutingProducer()
-            routing_key_default = 'info'
+            routing_key = sys.argv[2] if len(sys.argv) > 2 else 'info'
+            message = ' '.join(sys.argv[3:]) or 'Routing!'
         elif sys.argv[1] == "5":
             producer = TopicsProducer()
-            routing_key_default = 'anonymous.info'
-        routing_key = sys.argv[2] if len(sys.argv) > 2 else routing_key_default
-        message = ' '.join(sys.argv[3:]) or 'Hello World!'
+            routing_key = sys.argv[2] if len(sys.argv) > 2 else 'anonymous.info'
+            message = ' '.join(sys.argv[3:]) or 'Topics!'
         print(f" [x] Sending {producer} {routing_key}:{message}")
         return producer, message, routing_key
 
 
 if __name__ == "__main__":
+    """
+    python producer.py argv1 argv2 argv3 
+    """
     Producer.run()

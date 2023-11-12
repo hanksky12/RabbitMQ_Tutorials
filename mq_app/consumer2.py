@@ -3,6 +3,7 @@ import sys
 
 from app.utils.rabbit_mq.message import MessageReceiver
 from app.rabbit_parameters import rabbit_parameters
+from app.work.p2_work_queue.consumer import Consumer as WorkQueuesConsumer
 from app.work.p3_publish_subscribe.consumer import Consumer2 as PublishSubscribeConsumer2
 from app.work.p4_routing.consumer import Consumer as RoutingConsumer
 from app.work.p5_topics.consumer import Consumer as TopicsConsumer
@@ -19,16 +20,18 @@ class Consumer:
     def __get_parm_from_args(cls):
         if len(sys.argv) < 2:
             raise Exception("未選擇消費者")
-        routing_key_list_default = []
-        if sys.argv[1] == "3":
+        consumer = None
+        routing_key_list = None
+        if sys.argv[1] == "2":
+            consumer = WorkQueuesConsumer()
+        elif sys.argv[1] == "3":
             consumer = PublishSubscribeConsumer2()
         elif sys.argv[1] == "4":
             consumer = RoutingConsumer()
-            routing_key_list_default = ['error']
+            routing_key_list = sys.argv[2:] or ["info"]
         elif sys.argv[1] == "5":
             consumer = TopicsConsumer()
-            routing_key_list_default = ["*.error", "*.critical"]
-        routing_key_list = sys.argv[2:] or routing_key_list_default
+            routing_key_list = sys.argv[2:] or ["kern.*", "*.critical"]
         return consumer, routing_key_list
 
 

@@ -22,7 +22,7 @@ class Consumer:
         if len(sys.argv) < 2:
             raise Exception("未選擇消費者")
         consumer = None
-        routing_key_list_default = []
+        routing_key_list = None
         if sys.argv[1] == "1":
             consumer = HelloWordConsumer()
         elif sys.argv[1] == "2":
@@ -31,15 +31,17 @@ class Consumer:
             consumer = PublishSubscribeConsumer1()
         elif sys.argv[1] == "4":
             consumer = RoutingConsumer()
-            routing_key_list_default = ['info']
+            routing_key_list = sys.argv[2:] or ["info"]
         elif sys.argv[1] == "5":
             consumer = TopicsConsumer()
-            routing_key_list_default = ["kern.*", "*.critical"]
-        routing_key_list = sys.argv[2:] or routing_key_list_default
+            routing_key_list = sys.argv[2:] or ["kern.*", "*.critical"]
         return consumer, routing_key_list
 
 
 if __name__ == "__main__":
+    """
+    python consumer.py argv1 argv2 argv3 
+    """
     try:
         Consumer.run()
     except KeyboardInterrupt:
